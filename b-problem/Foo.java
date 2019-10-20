@@ -1,13 +1,12 @@
 import javax.swing.*;
+import javax.swing.Timer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.List;
-import java.util.Scanner;
 import java.util.stream.Collectors;
 
 class ShapeWrapper {
@@ -130,7 +129,7 @@ class MoveAnimation extends Animation {
                 destX = sourceX;
                 sourceX = temp;
 
-                start = curTime;
+                start += time;
             }
         }
         return new AffineTransform();
@@ -169,7 +168,7 @@ class RotateAnimation extends Animation {
                 double tmp = this.srcAngle;
                 srcAngle = destAngle;
                 destAngle = tmp;
-                start = curTime;
+                start += time;
             }
         }
         return tr;
@@ -179,7 +178,6 @@ class RotateAnimation extends Animation {
 class ScaleAnimation extends Animation {
     double srcScale;
     private double destScale;
-    private double lastScaled;
     private Long start = 0L;
 
     public ScaleAnimation(ShapeWrapper wrapper, long time, boolean cycle) {
@@ -201,19 +199,17 @@ class ScaleAnimation extends Animation {
             double speed = (destScale - srcScale) / time;
             double scaleFactor = srcScale + speed * (curTime - start);
             tr.translate(wrapper.getX(), wrapper.getY());
-            lastScaled = scaleFactor;
             tr.scale(scaleFactor, scaleFactor);
             tr.translate(-wrapper.getX(), -wrapper.getY());
             g.setTransform(tr);
         } else {
-            lastScaled = destScale;
             tr.scale(destScale, destScale);
             g.setTransform(tr);
             if (cycle) {
                 double tmp = this.destScale;
                 destScale = srcScale;
                 srcScale = tmp;
-                start = curTime;
+                start += time;
             }
         }
         return tr;
