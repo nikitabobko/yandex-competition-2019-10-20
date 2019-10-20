@@ -203,7 +203,9 @@ class ScaleAnimation extends Animation {
             tr.translate(-wrapper.getX(), -wrapper.getY());
             g.setTransform(tr);
         } else {
+            tr.translate(wrapper.getX(), wrapper.getY());
             tr.scale(destScale, destScale);
+            tr.translate(-wrapper.getX(), -wrapper.getY());
             g.setTransform(tr);
             if (cycle) {
                 double tmp = this.destScale;
