@@ -349,6 +349,25 @@ public class Foo extends JPanel implements ActionListener {
                     animations.add(e);
                 }
             }
+            animations.sort(new Comparator<Animation>() {
+                private int priority(Animation animation) {
+                    if (animation instanceof MoveAnimation) {
+                        return 0;
+                    }
+                    if (animation instanceof RotateAnimation) {
+                        return 1;
+                    }
+                    if (animation instanceof ScaleAnimation) {
+                        return 2;
+                    }
+                    throw new IllegalStateException("Unknown animation: " + animation);
+                }
+
+                @Override
+                public int compare(Animation x, Animation y) {
+                    return Integer.compare(priority(x), priority(y));
+                }
+            });
             last.animations = animations;
         }
         SwingUtilities.invokeLater(new Runnable() {
