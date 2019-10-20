@@ -2,31 +2,30 @@ package com.yandex.championship.quest;
 
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.Layout;
 import android.text.TextWatcher;
 import android.view.Gravity;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.GridLayout;
+import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.yandex.championship.quest_core_lib.QuestCore;
 
-import static com.yandex.championship.quest_core_lib.QuestCore.TaskType;
+import androidx.appcompat.app.AppCompatActivity;
+
 import static com.yandex.championship.quest_core_lib.QuestCore.TaskResult;
+import static com.yandex.championship.quest_core_lib.QuestCore.TaskType;
 
 
 public class MainActivity extends AppCompatActivity {
     private static final int BUTTON_TEXT_SIZE = 36;
 
     private final QuestCore mQuestCore = new QuestCore(this);
-    private final Button mBackButton;
-    private final TextView mTitleTextView;
+    private Button mBackButton;
+    private TextView mTitleTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case TaskResult.BINGO:
                 renderResult();
+                break;
             default:
                 throw new IllegalStateException("Unexpected value: " + result);
         }
@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
 
         TextView resultTextView = new TextView(this);
         resultTextView.setTextSize(60);
-        resultTextView.setText(mQuestCore.getResult());
+        resultTextView.setText(String.valueOf(mQuestCore.getResult()));
         resultTextView.setGravity(Gravity.CENTER);
 
         LinearLayout parentLayout = findViewById(R.id.main_layout);
@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
         parentLayout.invalidate();
     }
 
-    private Layout getDirectionTaskControlsLayout() {
+    private View getDirectionTaskControlsLayout() {
         LinearLayout layout = new LinearLayout(this);
         layout.setGravity(Gravity.CENTER_HORIZONTAL);
         layout.setOrientation(LinearLayout.HORIZONTAL);
@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
         leftButton.setOnClickListener((View) ->
                 processTaskResult(mQuestCore.checkDirectionAnswer(QuestCore.Direction.LEFT)));
         rightButton.setOnClickListener((View) ->
-                processTaskResult(mQuestCore.checkDirectionAnswer(QuestCore.Direction.LEFT)));
+                processTaskResult(mQuestCore.checkDirectionAnswer(QuestCore.Direction.RIGHT)));
 
         layout.addView(leftButton);
         layout.addView(rightButton);
@@ -122,8 +122,9 @@ public class MainActivity extends AppCompatActivity {
         return layout;
     }
 
-    private Layout getNumberTaskControlsLayout() {
-        FrameLayout layout = new FrameLayout(this);
+    private View getNumberTaskControlsLayout() {
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.HORIZONTAL);
 
         for (int i = 0; i < 16; ++i) {
             int value = i +1;
@@ -137,14 +138,16 @@ public class MainActivity extends AppCompatActivity {
             layout.addView(button);
         }
 
-        return layout;
+        HorizontalScrollView view = new HorizontalScrollView(this);
+        view.addView(layout);
+        return view;
     }
 
-    private Layout getTextTaskControlsLayout() {
+    private View getTextTaskControlsLayout() {
         EditText textField = new EditText(this);
         textField.setGravity(Gravity.CENTER_HORIZONTAL);
 
-        Button okButton;
+        Button okButton = new Button(this);
         okButton.setText(getString(R.string.ok_button_text));
         okButton.setGravity(Gravity.CENTER_HORIZONTAL);
         okButton.setTextSize(BUTTON_TEXT_SIZE);
@@ -152,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
                 mQuestCore.checkTextAnswer(textField.getText().toString())));
         okButton.setEnabled(false);
 
-        mTitleTextView.addTextChangedListener(new TextWatcher() {
+        textField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                 // no-op
@@ -168,6 +171,7 @@ public class MainActivity extends AppCompatActivity {
                 okButton.setEnabled(s.length() > 0);
             }
         });
+        textField.setText("yandex");
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
         layout.setGravity(Gravity.CENTER_HORIZONTAL);
@@ -193,6 +197,6 @@ public class MainActivity extends AppCompatActivity {
         }
         int firstChildToRemoveIndex = parentLayout.indexOfChild(child) + 1;
         parentLayout.removeViews(firstChildToRemoveIndex,
-                parentLayout.getChildCount());
+                parentLayout.getChildCount() - firstChildToRemoveIndex);
     }
 }
