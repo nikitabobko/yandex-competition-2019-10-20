@@ -1,0 +1,11 @@
+00.txt 42
+01.txt bonjour
+02.txt yandex
+03.txt competition
+04.txt iienjoctn
+05.txt apdeatr
+06.txt miotdaer
+07.txt 
+08.txt
+09.txt
+10.txt
