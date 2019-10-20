@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Quest</string>
+    <string name="wrong_answer_toast_text">Неверный ответ</string>
+    <string name="result_text">Вы прошли квест. Ответ:</string>
+    <string name="left_button_text">Налево</string>
+    <string name="right_button_text">Направо</string>
+    <string name="back_button_text">Назад</string>
+    <string name="ok_button_text">Готов</string>
+</resources>

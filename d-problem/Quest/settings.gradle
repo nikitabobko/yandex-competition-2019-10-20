@@ -1,0 +1,2 @@
+include ':app', ':quest-core-lib'
+rootProject.name='Quest'
